@@ -66,4 +66,10 @@ object FrmClientSocket: TFrmClientSocket
       OnClick = Close1Click
     end
   end
+  object Timer1: TTimer
+    Interval = 60000
+    OnTimer = Timer1Timer
+    Left = 216
+    Top = 120
+  end
 end

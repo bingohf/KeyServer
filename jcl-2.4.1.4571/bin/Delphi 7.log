@@ -1,0 +1,157 @@
+================================================================================
+JCL 2.4 Release Build 4571
+==========Delphi 7==============================================================
+Installed personalities :
+32 bit Delphi
+================================================================================
+Multiple profile installation
+Single profile installation
+================================================================================
+Saving conditional defines...
+Loaded template for include file F:\socket\jcl-2.4.1.4571\source\include\jcl.template.inc
+Saved include file F:\socket\jcl-2.4.1.4571\source\include\jcld7.inc
+Building source\common library units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" bzip2 Jcl8087 JclAbstractContainers JclAlgorithms JclAnsiStrings JclArrayLists JclArraySets JclBase JclBinaryTrees JclCharsets JclCompilerUtils JclComplex JclCompression JclContainerIntf JclCounter JclDateTime JclDevToolsResources JclExprEval JclFileUtils JclHashMaps JclHashSets JclIDEUtils JclIniFiles JclLinkedLists JclLogic JclMath JclMIDI JclMime JclNotify JclPCRE JclPreProcessorAlgorithmsTemplates JclPreProcessorArrayListsTemplates JclPreProcessorArraySetsTemplates JclPreProcessorBinaryTreesTemplates JclPreProcessorContainer1DTemplates JclPreProcessorContainer2DTemplates JclPreProcessorContainerIntfTemplates JclPreProcessorContainerKnownMaps JclPreProcessorContainerKnownTypes JclPreProcessorContainerTemplates JclPreProcessorContainerTypes JclPreProcessorExcDlgTemplates JclPreProcessorHashMapsTemplates JclPreProcessorHashSetsTemplates JclPreProcessorLexer JclPreProcessorLinkedListsTemplates JclPreProcessorParser JclPreProcessorQueuesTemplates JclPreProcessorSortedMapsTemplates JclPreProcessorStacksTemplates JclPreProcessorTemplates JclPreProcessorTreesTemplates JclPreProcessorVectorsTemplates JclQueues JclResources JclRTTI JclSchedule JclSimpleXml JclSortedMaps JclStacks JclStatistics JclStreams JclStrHashMap JclStringConversions JclStringLists JclStrings JclSynch JclSysInfo JclSysUtils JclTrees JclUnicode JclUnitConv JclUnitVersioning JclUnitVersioningProviders JclUsesUtils JclValidation JclVectors JclWideStrings pcre zlibh -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C- -$D- -$I- -$L- -$O+ -$Q- -$R- -$W- -$Y- -N"..\..\..\JCL-24~1.457\lib\d7" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+751288 lines, 6.04 seconds, 52715 bytes code, 16856 bytes data.
+Building source\windows library units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" Hardlinks JclAppInst JclCIL JclCLR JclCOM JclConsole JclCppException JclDebug JclDebugSerialization JclDebugXMLDeserializer JclDebugXMLSerializer JclDotNet JclHelpUtils JclHookExcept JclLANMan JclLocales JclMapi JclMetadata JclMiscel JclMsBuild JclMsdosSys JclMultimedia JclNTFS JclPeImage JclRegistry JclSecurity JclShell JclStructStorage JclSvcCtrl JclTask JclTD32 JclTimeZones JclWin32 JclWin32Ex JclWinMIDI mscoree_TLB mscorlib_TLB MSHelpServices_TLB MSTask sevenzip Snmp -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C- -$D- -$I- -$L- -$O+ -$Q- -$R- -$W- -$Y- -N"..\..\..\JCL-24~1.457\lib\d7" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+199138 lines, 2.06 seconds, 2105 bytes code, 188 bytes data.
+Building source\vcl library units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" JclFont JclGraphics JclGraphUtils JclOpenDialogFavorites JclOpenDialogHooks JclPrint JclVclResources JclVersionControl JclVersionCtrlCVSImpl JclVersionCtrlGITImpl JclVersionCtrlSVNImpl -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C- -$D- -$I- -$L- -$O+ -$Q- -$R- -$W- -$Y- -N"..\..\..\JCL-24~1.457\lib\d7" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+46383 lines, 0.95 seconds, 6711 bytes code, 36 bytes data.
+Building source\common library debug units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" bzip2 Jcl8087 JclAbstractContainers JclAlgorithms JclAnsiStrings JclArrayLists JclArraySets JclBase JclBinaryTrees JclCharsets JclCompilerUtils JclComplex JclCompression JclContainerIntf JclCounter JclDateTime JclDevToolsResources JclExprEval JclFileUtils JclHashMaps JclHashSets JclIDEUtils JclIniFiles JclLinkedLists JclLogic JclMath JclMIDI JclMime JclNotify JclPCRE JclPreProcessorAlgorithmsTemplates JclPreProcessorArrayListsTemplates JclPreProcessorArraySetsTemplates JclPreProcessorBinaryTreesTemplates JclPreProcessorContainer1DTemplates JclPreProcessorContainer2DTemplates JclPreProcessorContainerIntfTemplates JclPreProcessorContainerKnownMaps JclPreProcessorContainerKnownTypes JclPreProcessorContainerTemplates JclPreProcessorContainerTypes JclPreProcessorExcDlgTemplates JclPreProcessorHashMapsTemplates JclPreProcessorHashSetsTemplates JclPreProcessorLexer JclPreProcessorLinkedListsTemplates JclPreProcessorParser JclPreProcessorQueuesTemplates JclPreProcessorSortedMapsTemplates JclPreProcessorStacksTemplates JclPreProcessorTemplates JclPreProcessorTreesTemplates JclPreProcessorVectorsTemplates JclQueues JclResources JclRTTI JclSchedule JclSimpleXml JclSortedMaps JclStacks JclStatistics JclStreams JclStrHashMap JclStringConversions JclStringLists JclStrings JclSynch JclSysInfo JclSysUtils JclTrees JclUnicode JclUnitConv JclUnitVersioning JclUnitVersioningProviders JclUsesUtils JclValidation JclVectors JclWideStrings pcre zlibh -U"C:\Program Files (x86)\Borland\Delphi7\lib\debug" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C+ -$D+ -$I+ -$L+ -$O- -$Q+ -$R+ -$W+ -$Y+ -N"..\..\..\JCL-24~1.457\lib\d7\debug" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+751288 lines, 6.89 seconds, 52887 bytes code, 16856 bytes data.
+Building source\windows library debug units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" Hardlinks JclAppInst JclCIL JclCLR JclCOM JclConsole JclCppException JclDebug JclDebugSerialization JclDebugXMLDeserializer JclDebugXMLSerializer JclDotNet JclHelpUtils JclHookExcept JclLANMan JclLocales JclMapi JclMetadata JclMiscel JclMsBuild JclMsdosSys JclMultimedia JclNTFS JclPeImage JclRegistry JclSecurity JclShell JclStructStorage JclSvcCtrl JclTask JclTD32 JclTimeZones JclWin32 JclWin32Ex JclWinMIDI mscoree_TLB mscorlib_TLB MSHelpServices_TLB MSTask sevenzip Snmp -U"C:\Program Files (x86)\Borland\Delphi7\lib\debug" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C+ -$D+ -$I+ -$L+ -$O- -$Q+ -$R+ -$W+ -$Y+ -N"..\..\..\JCL-24~1.457\lib\d7\debug" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+199138 lines, 2.39 seconds, 2246 bytes code, 188 bytes data.
+Building source\vcl library debug units for Delphi 7...
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" JclFont JclGraphics JclGraphUtils JclOpenDialogFavorites JclOpenDialogHooks JclPrint JclVclResources JclVersionControl JclVersionCtrlCVSImpl JclVersionCtrlGITImpl JclVersionCtrlSVNImpl -U"C:\Program Files (x86)\Borland\Delphi7\lib\debug" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -M -$X+ -$G+ -$H+ -$P+ -$U- -$T- -$V+ -$J+ -$Z1 -$J+ -$C+ -$D+ -$I+ -$L+ -$O- -$Q+ -$R+ -$W+ -$Y+ -N"..\..\..\JCL-24~1.457\lib\d7\debug" -I"..\..\..\JCL-24~1.457\source\include" -U"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl" -R"..\..\..\JCL-24~1.457\source\common;..\..\..\JCL-24~1.457\source\windows;..\..\..\JCL-24~1.457\source\vcl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+46383 lines, 1.59 seconds, 7202 bytes code, 36 bytes data.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\Jcl.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\Jcl.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\Jcl.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+127 lines, 0.67 seconds, 1354116 bytes code, 79829 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclContainers.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclContainers.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclContainers.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+68 lines, 0.30 seconds, 1499196 bytes code, 1157 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclDeveloperTools.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclDeveloperTools.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclDeveloperTools.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+85 lines, 0.19 seconds, 341192 bytes code, 15409 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclVcl.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclVcl.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclVcl.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+66 lines, 0.27 seconds, 103200 bytes code, 1881 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclBaseExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclBaseExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclBaseExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+29107 lines, 0.50 seconds, 41268 bytes code, 689 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclDebugExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclDebugExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclDebugExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+6604 lines, 0.23 seconds, 27556 bytes code, 433 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclProjectAnalysisExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclProjectAnalysisExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclProjectAnalysisExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+5512 lines, 0.19 seconds, 19088 bytes code, 297 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclFavoriteFoldersExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclFavoriteFoldersExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclFavoriteFoldersExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+2312 lines, 0.19 seconds, 6152 bytes code, 161 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclRepositoryExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclRepositoryExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclRepositoryExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+25536 lines, 0.31 seconds, 31956 bytes code, 669 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclUsesExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclUsesExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclUsesExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+7749 lines, 0.20 seconds, 18936 bytes code, 285 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclSIMDViewExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclSIMDViewExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclSIMDViewExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+14148 lines, 0.28 seconds, 43016 bytes code, 937 bytes data.
+Compilation success
+...done.
+Building F:\socket\jcl-2.4.1.4571\packages\d7\JclStackTraceViewerExpert.dpk...
+Compiling package F:\socket\jcl-2.4.1.4571\packages\d7\JclStackTraceViewerExpert.dpk
+"C:\Program Files (x86)\Borland\Delphi7\bin\dcc32.exe" "F:\socket\jcl-2.4.1.4571\packages\d7\JclStackTraceViewerExpert.dpk" -U"C:\Program Files (x86)\Borland\Delphi7\lib" -N"..\..\lib\d7" -I"..\..\source\include;..\..\experts\common" -R"..\..\source\include;..\..\experts\common" -DWIN32;CONDITIONALEXPRESSIONS;VER150;RELEASE -U"..\..\..\JCL-24~1.457\lib\d7;C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl;..\..\source\include;..\..\experts\common" -LN"..\..\..\JCL-24~1.457\lib\d7" -LE"C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl"
+Borland Delphi Version 15.0
+Copyright (c) 1983,2002 Borland Software Corporation
+33517 lines, 0.33 seconds, 48088 bytes code, 745 bytes data.
+Compilation success
+...done.
+Added "F:\socket\JCL-24~1.457\lib\d7;F:\socket\jcl-2.4.1.4571\source\include" to library search path.
+Added "F:\socket\jcl-2.4.1.4571\source\common;F:\socket\jcl-2.4.1.4571\source\windows;F:\socket\jcl-2.4.1.4571\source\vcl" to library browsing path.
+Added "F:\socket\JCL-24~1.457\lib\d7\debug" to Debug DCU Path.
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclBaseExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclDebugExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclProjectAnalysisExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclFavoriteFoldersExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclRepositoryExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclUsesExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclSIMDViewExpert70.bpl
+Registration ok
+Registering package C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\JclStackTraceViewerExpert70.bpl
+Registration ok

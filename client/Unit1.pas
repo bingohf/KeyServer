@@ -90,14 +90,19 @@ begin
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
-var
-  thread :TMyThread;
+var i,j:integer;
+  r:real;
 begin
-  thread := TMyThread.Create(true);
-  thread.ProEvent := showmsg;
+  for i :=0 to 999999999 do
+  begin
 
-  thread.Resume;
-  showmessage('2');
+    r := 103232343/4324.323;
+
+      for j :=0 to 9 do
+  begin
+    r := 103232343/4324.323;
+  end;
+  end;
 end;
 
 

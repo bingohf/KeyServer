@@ -199,11 +199,12 @@ begin
   begin
      Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license count is not enough (' + inttostr(FLicenseCount) +')');
      Socket.Disconnect(Socket.SocketHandle);
+
     exit;
   end;
   if (now +15 > FExpiryDate) then
      NotifyAll('[showMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
-
+  Socket.SendText(#13'[SetConnectStatus]:OK');
   client := TClient.Create(socket);
   AddClient(client);
   Fcallback.clientAdd(client, FClientList);

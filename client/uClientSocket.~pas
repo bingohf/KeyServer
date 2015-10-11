@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ScktComp,inifiles,PerlRegEx, ComCtrls,ulkJson, Menus;
+  Dialogs, ScktComp,inifiles,PerlRegEx, ComCtrls,ulkJson, Menus, ExtCtrls;
 
 type
   TMyThread = class(TThread)
@@ -27,6 +27,7 @@ type
     ListView1: TListView;
     PopupMenu1: TPopupMenu;
     Close1: TMenuItem;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure ClientSocketError(Sender: TObject; Socket: TCustomWinSocket;
       ErrorEvent: TErrorEvent; var ErrorCode: Integer);
@@ -35,6 +36,7 @@ type
     procedure ClientSocketConnect(Sender: TObject;
       Socket: TCustomWinSocket);
     procedure Close1Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
     FRegEx :TPerlRegEx;
@@ -45,7 +47,8 @@ type
     FLevel:string;
     FRefuseMsg: String;
     FServerInfo:String;
-
+    FAutoRetryCount:integer;
+    FisFirst:Boolean;
     procedure NotifyStatusChange(msg:String);
     procedure NotifyMessageChange(msg:String);
     procedure NotifyMessageLevelChange(level:String);
@@ -58,6 +61,7 @@ type
     procedure AddListener(aListener:ILicenseChange);
     procedure RemoveListener(aListener:ILicenseChange);
     procedure Connect;
+    procedure AutoConnect;
     property ClientListview:TListView read FClientListView write SetClientListView;
     procedure SetUsername(userName:String);
     property NeedReconnect:boolean read FNeedReconnect write FNeedReconnect default true;
@@ -91,8 +95,14 @@ end;
 procedure TFrmClientSocket.ClientSocketDisconnect(Sender: TObject;
   Socket: TCustomWinSocket);
 begin
+   FAutoRetryCount:=FAutoRetryCount +1;
    FLastStatus := 'Disconnected' ;
-   NotifyStatusChange(FLastStatus);
+   if (FAutoRetryCount >4) and FisFirst then
+     NotifyStatusChange(FLastStatus)
+   else
+     AutoConnect;
+
+
 end;
 
 procedure TFrmClientSocket.ClientSocketError(Sender: TObject;
@@ -100,9 +110,17 @@ procedure TFrmClientSocket.ClientSocketError(Sender: TObject;
 begin
   FLastmsg := 'ErrorCode:' + inttostr(errorCode);
   FLastStatus := 'Disconnected' ;
-  NotifyStatusChange(FLastStatus);
-  NotifyMessageChange(FlastMsg);
+  FAutoRetryCount:=FAutoRetryCount +1;
+  if (FAutoRetryCount > 4) and FisFirst then
+  begin
+    NotifyStatusChange(FLastStatus);
+    NotifyMessageChange(FlastMsg);
+  end else
+  begin
+    AutoConnect;
+  end;
   ErrorCode := 0;
+
 end;
 
 procedure TFrmClientSocket.ClientSocketRead(Sender: TObject;
@@ -149,7 +167,7 @@ procedure TFrmClientSocket.Connect;
 begin
   if ClientSocket.Host <>'' then
   begin
-    FRefuseMsg := 'Can not connect to LedwayKeyService';
+    FRefuseMsg := 'Can not connect to Ledway Key Server, please check your network or contact Ledway Key Server Admin.';
     FServerInfo := '';
     FNeedReconnect := true;
     ClientSocket.Open;
@@ -174,6 +192,8 @@ begin
   FRegEx.Options := [preCaseLess];
   FClientListView := nil;
   SetClientListView(ListView1);
+  FAutoRetryCount := 0;
+  FisFirst := true;
  // FRefuseMsg := 'Can not connect to LedwayKeyService';
 end;
 
@@ -227,6 +247,9 @@ procedure TFrmClientSocket.ClientSocketConnect(Sender: TObject;
 begin
    FLastStatus := 'Connected' ;
    NotifyStatusChange(FLastStatus);
+   FAutoRetryCount:=0;
+   FisFirst := false;
+   Timer1.Enabled := false;
  //  Socket.SendText('[SetUserName]:Admin');
 end;
 
@@ -365,6 +388,16 @@ end;
 procedure TFrmClientSocket.SetServerInfo(Msg: String);
 begin
   FServerInfo := Msg;
+end;
+
+procedure TFrmClientSocket.Timer1Timer(Sender: TObject);
+begin
+  Connect;
+end;
+
+procedure TFrmClientSocket.AutoConnect;
+begin
+  Timer1.Enabled := true;
 end;
 
 end.

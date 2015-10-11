@@ -203,7 +203,7 @@ begin
   end;
   if (now +15 > FExpiryDate) then
      NotifyAll('[showMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
-
+  Socket.SendText(#13'[SetConnectStatus]:OK');
   client := TClient.Create(socket);
   AddClient(client);
   Fcallback.clientAdd(client, FClientList);
@@ -488,7 +488,10 @@ begin
    try
      iniFile.WriteString('License','Count',s);
      LoadLicense;
-     result := 'ok';
+     if FLicenseError = '' then
+       result := 'ok'
+     else
+       result := FLicenseError;
    finally
      iniFile.Free;
    end;
@@ -513,7 +516,10 @@ begin
    try
      iniFile.WriteString('License','ExpiredDate',s);
      LoadLicense;
-     result:='ok';
+     if FLicenseError = '' then
+       result := 'ok'
+     else
+       result := FLicenseError;
    finally
      iniFile.Free;
    end;
