@@ -6,7 +6,8 @@ uses
   uClientSocket in 'uClientSocket.pas',
   uFrmConnect in 'uFrmConnect.pas' {frmConnect},
   ExtCtrls in 'c:\program files (x86)\borland\delphi7\source\vcl\ExtCtrls.pas',
-  ScktComp in 'c:\program files (x86)\borland\delphi7\source\vcl\ScktComp.pas';
+  ScktComp in 'c:\program files (x86)\borland\delphi7\source\vcl\ScktComp.pas',
+  ElAES in 'ElAES.pas';
 
 {$R *.res}
 

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ScktComp,inifiles,PerlRegEx, ComCtrls,ulkJson, Menus, ExtCtrls,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,EncdDecd;
 
 type
   TMyThread = class(TThread)
@@ -87,9 +87,30 @@ var
 
 implementation
 
-uses uFrmConnect;
+uses uFrmConnect, ElAES;
 
 {$R *.dfm}
+
+function EncryptStr(str:String):String;
+var
+  sDest:TmemoryStream;
+  sBase64,sStream :TStringStream;
+  key:TAESKey256;
+  keyString:String;
+
+begin
+  keyString :=  'qwer0987_';
+  sStream := TStringStream.Create(str);
+  sDest  := TMemoryStream.Create;
+  sBase64 := TStringStream.Create('');
+  FillChar(key, sizeOf(key), 0);
+  Move(PChar(keyString)^, key, length(keyString));
+  sStream.Position := 0;
+  EncryptAESStreamECB(sStream, sStream.Size, key, sDest);
+  sDest.Position := 0;
+  EncodeStream(sDest, sBase64);
+  result := sBase64.DataString;
+end;
 
 procedure TFrmClientSocket.AddListener(aListener: ILicenseChange);
 begin
@@ -174,14 +195,49 @@ begin
 end;
 
 procedure TFrmClientSocket.Connect;
+  function isValidServer:Boolean;
+  var
+    RespData: TStringStream;
+    Response:String;
+    random,encodedRandom:String;
+  begin
+    Result := false;
+     RespData := TStringStream.Create('');
+     try
+       random := floatToStr(now);
+       encodedRandom := EncryptStr(random);
+       FrmClientSocket.IdHTTP1.Get('/?Key=' + random,RespData);
+       Response := respData.DataString;
+       RespData.Free;
+       if (encodedRandom = Response) then
+         result := true
+       else
+       begin
+         Result := false;
+         SetRefuseMsg('Invalid Server');
+       end;
+     except On e:Exception do
+       begin
+         SetRefuseMsg(e.Message);
+       end
+
+     end;
+
+  end;
 begin
+  FNeedReconnect := true;
+  if not isValidServer then
+  begin
+    NotifyStatusChange('InvalidServer');
+    exit;
+  end;
 //  if ClientSocket.Host <>'' then
   begin
     if (not FActive) and (not FConnecting) then
     begin
       FRefuseMsg := 'Can not connect to Ledway Key Server, please check your network or contact Ledway Key Server Admin.';
       FServerInfo := '';
-      FNeedReconnect := true;
+
       ClientSocket.Active := true;
     end;
   end;
@@ -198,6 +254,8 @@ begin
   inifile := TIniFile.Create(GetCurrentDir +'\winup.ini');
   liceseServer := inifile.ReadString('ApControl','LicenseServer','');
   FMaxRetry :=  inifile.ReadInteger('ApControl','MaxRetry',4);
+  IdHTTP1.Host := liceseServer;
+  IdHTTP1.Port := 7300;
   if liceseServer <>'' then
   begin
     ClientSocket.Host := liceseServer;

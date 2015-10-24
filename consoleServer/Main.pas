@@ -4,7 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ComCtrls, StdCtrls, ExtCtrls, ScktComp,uClientManager,uClient,JclSysInfo;
+  Dialogs, Menus, ComCtrls, StdCtrls, ExtCtrls, ScktComp,uClientManager,uClient,JclSysInfo,
+  IdBaseComponent, IdComponent, IdTCPServer, IdCustomHTTPServer,
+  IdHTTPServer;
 
 type
   TMainForm = class(TForm,INotifyChange)
@@ -23,6 +25,7 @@ type
     closeClient: TMenuItem;
     Timer: TTimer;
     adminSocket: TServerSocket;
+    IdHTTPServer1: TIdHTTPServer;
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
     procedure closeClientClick(Sender: TObject);
@@ -30,6 +33,9 @@ type
     procedure clientSocketListen(Sender: TObject;
       Socket: TCustomWinSocket);
     procedure TimerTimer(Sender: TObject);
+    procedure IdHTTPServer1CommandGet(AThread: TIdPeerThread;
+      ARequestInfo: TIdHTTPRequestInfo;
+      AResponseInfo: TIdHTTPResponseInfo);
   private
     { Private declarations }
     procedure clientAdd(client:TClient; clientList:TStringList);
@@ -46,12 +52,34 @@ var
 
 implementation
 
+uses ElAES,EncdDecd;
+
 
 
 
 {$R *.dfm}
 
 { TMainForm }
+function EncryptStr(str:String):String;
+var
+  sDest:TmemoryStream;
+  sBase64,sStream :TStringStream;
+  key:TAESKey256;
+  keyString:String;
+
+begin
+  keyString :=  'qwer0987_';
+  sStream := TStringStream.Create(str);
+  sDest  := TMemoryStream.Create;
+  sBase64 := TStringStream.Create('');
+  FillChar(key, sizeOf(key), 0);
+  Move(PChar(keyString)^, key, length(keyString));
+  sStream.Position := 0;
+  EncryptAESStreamECB(sStream, sStream.Size, key, sDest);
+  sDest.Position := 0;
+  EncodeStream(sDest, sBase64);
+  result := sBase64.DataString;
+end;
 
 procedure TMainForm.clientAdd(client: TClient; clientList: TStringList);
 var
@@ -140,6 +168,15 @@ begin
   StatusBar.Panels[1].Text := GetVolumeSerialNumber('C');
   StatusBar.Panels[2].Text := 'Expried Date:' + DateTimeToStr(ClientManager.ExpiryDate);
   StatusBar.Panels[0].Text := Format('License: %d/%d', [Listview.Items.Count , ClientManager.LicenseCount]) ;
+end;
+
+procedure TMainForm.IdHTTPServer1CommandGet(AThread: TIdPeerThread;
+  ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  key:String;
+begin
+  key := ARequestInfo.Params.Values['Key'];
+  AResponseInfo.ContentText := EncryptStr(key);
 end;
 
 end.
