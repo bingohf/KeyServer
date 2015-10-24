@@ -1,8 +1,8 @@
 object FrmClientSocket: TFrmClientSocket
   Left = 337
   Top = 229
-  Width = 458
-  Height = 274
+  Width = 596
+  Height = 271
   Caption = 'Key Management'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,8 +17,8 @@ object FrmClientSocket: TFrmClientSocket
   object ListView1: TListView
     Left = 0
     Top = 0
-    Width = 442
-    Height = 236
+    Width = 580
+    Height = 233
     Align = alClient
     Columns = <
       item
@@ -51,6 +51,7 @@ object FrmClientSocket: TFrmClientSocket
     Active = False
     ClientType = ctNonBlocking
     Port = 7100
+    OnConnecting = ClientSocketConnecting
     OnConnect = ClientSocketConnect
     OnDisconnect = ClientSocketDisconnect
     OnRead = ClientSocketRead
@@ -67,9 +68,26 @@ object FrmClientSocket: TFrmClientSocket
     end
   end
   object Timer1: TTimer
-    Interval = 10000
+    Interval = 12000
     OnTimer = Timer1Timer
     Left = 216
     Top = 120
+  end
+  object IdHTTP1: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 5000
+    AllowCookies = False
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = 0
+    Request.ContentRangeStart = 0
+    Request.ContentType = 'text/html'
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 304
+    Top = 72
   end
 end

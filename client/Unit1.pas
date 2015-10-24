@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ScktComp, ComCtrls,uClientSocket, ExtCtrls,PerlRegEx;
+  Dialogs, StdCtrls, ScktComp, ComCtrls,uClientSocket, ExtCtrls,PerlRegEx,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
   TMyMSG = record
@@ -22,13 +23,14 @@ type
     StatusBar1: TStatusBar;
     Button1: TButton;
     Timer1: TTimer;
-    Button2: TButton;
     Button3: TButton;
+    IdHTTP1: TIdHTTP;
+    Button2: TButton;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations
     }
@@ -89,21 +91,7 @@ begin
 
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
-var i,j:integer;
-  r:real;
-begin
-  for i :=0 to 999999999 do
-  begin
 
-    r := 103232343/4324.323;
-
-      for j :=0 to 9 do
-  begin
-    r := 103232343/4324.323;
-  end;
-  end;
-end;
 
 
 
@@ -134,6 +122,15 @@ begin
    FRegEx := TPerlRegEx.Create;
    FRegEx.Options := [preCaseLess];
    FRegEx.RegEx := '\[\S*\]';
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+RespData: TStringStream;
+begin
+  RespData := TStringStream.Create('');
+  IdHTTP1.Get('http://localhost:7300/?Key=123',RespData);
+  showmessage(respData.DataString);
 end;
 
 end.

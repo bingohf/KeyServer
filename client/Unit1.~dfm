@@ -45,27 +45,44 @@ object Form1: TForm1
     TabOrder = 2
     OnClick = Button1Click
   end
-  object Button2: TButton
-    Left = 520
-    Top = 248
-    Width = 75
-    Height = 25
-    Caption = 'Button2'
-    TabOrder = 3
-    OnClick = Button2Click
-  end
   object Button3: TButton
     Left = 552
     Top = 328
     Width = 75
     Height = 25
     Caption = 'Button3'
-    TabOrder = 4
+    TabOrder = 3
     OnClick = Button3Click
+  end
+  object Button2: TButton
+    Left = 592
+    Top = 200
+    Width = 75
+    Height = 25
+    Caption = 'Button2'
+    TabOrder = 4
+    OnClick = Button2Click
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
     Left = 424
     Top = 240
+  end
+  object IdHTTP1: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 0
+    AllowCookies = False
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = 0
+    Request.ContentRangeStart = 0
+    Request.ContentType = 'text/html'
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 496
+    Top = 120
   end
 end

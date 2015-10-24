@@ -14,7 +14,6 @@ type
     ProEvent:TThreadMethod;
   end;
 
-
   TMsgProcedure = procedure(msg:String) of object;
   ILicenseChange = interface
     procedure StatusChange(msg:String);
@@ -37,6 +36,7 @@ type
       Socket: TCustomWinSocket);
     procedure Close1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure ClientSocketConnecting(Sender: TObject; Socket: TCustomWinSocket);
   private
     { Private declarations }
     FRegEx :TPerlRegEx;
@@ -49,6 +49,9 @@ type
     FServerInfo:String;
     FAutoRetryCount:integer;
     FisFirst:Boolean;
+    FActive:Boolean;
+    FConnecting:Boolean;
+    FMaxRetry:integer;
     procedure NotifyStatusChange(msg:String);
     procedure NotifyMessageChange(msg:String);
     procedure NotifyMessageLevelChange(level:String);
@@ -74,6 +77,7 @@ type
     procedure SetMessageLevel(level:String);
     procedure SetRefuseMsg(msg:String);
     procedure SetServerInfo(Msg:String);
+    procedure SetConnectStatus(msg:String);
   end;
 
 var
@@ -95,9 +99,11 @@ end;
 procedure TFrmClientSocket.ClientSocketDisconnect(Sender: TObject;
   Socket: TCustomWinSocket);
 begin
+  FActive:=false;
+  FConnecting := false;
    FAutoRetryCount:=FAutoRetryCount +1;
    FLastStatus := 'Disconnected' ;
-   if (FAutoRetryCount >4) and FisFirst then
+   if (FAutoRetryCount >FMaxRetry) or FisFirst then
      NotifyStatusChange(FLastStatus)
    else
      AutoConnect;
@@ -108,10 +114,12 @@ end;
 procedure TFrmClientSocket.ClientSocketError(Sender: TObject;
   Socket: TCustomWinSocket; ErrorEvent: TErrorEvent; var ErrorCode: Integer);
 begin
+  FActive:=false;
+  FConnecting := false;
   FLastmsg := 'ErrorCode:' + inttostr(errorCode);
   FLastStatus := 'Disconnected' ;
   FAutoRetryCount:=FAutoRetryCount +1;
-  if (FAutoRetryCount > 4) and FisFirst then
+  if (FAutoRetryCount > FMaxRetry) or FisFirst then
   begin
     NotifyStatusChange(FLastStatus);
     NotifyMessageChange(FlastMsg);
@@ -165,12 +173,15 @@ end;
 
 procedure TFrmClientSocket.Connect;
 begin
-  if ClientSocket.Host <>'' then
+//  if ClientSocket.Host <>'' then
   begin
-    FRefuseMsg := 'Can not connect to Ledway Key Server, please check your network or contact Ledway Key Server Admin.';
-    FServerInfo := '';
-    FNeedReconnect := true;
-    ClientSocket.Open;
+    if (not FActive) and (not FConnecting) then
+    begin
+      FRefuseMsg := 'Can not connect to Ledway Key Server, please check your network or contact Ledway Key Server Admin.';
+      FServerInfo := '';
+      FNeedReconnect := true;
+      ClientSocket.Active := true;
+    end;
   end;
 end;
 
@@ -179,8 +190,12 @@ var
   inifile:TIniFile;
   liceseServer:String;
 begin
+
+  FConnecting := false;
+  FActive:=false;
   inifile := TIniFile.Create(GetCurrentDir +'\winup.ini');
   liceseServer := inifile.ReadString('ApControl','LicenseServer','');
+  FMaxRetry :=  inifile.ReadInteger('ApControl','MaxRetry',4);
   if liceseServer <>'' then
   begin
     ClientSocket.Host := liceseServer;
@@ -245,12 +260,15 @@ end;
 procedure TFrmClientSocket.ClientSocketConnect(Sender: TObject;
   Socket: TCustomWinSocket);
 begin
-   FLastStatus := 'Connected' ;
-   NotifyStatusChange(FLastStatus);
-   FAutoRetryCount:=0;
-   FisFirst := false;
-   Timer1.Enabled := false;
+  FActive:=true;
+  FConnecting :=false;
  //  Socket.SendText('[SetUserName]:Admin');
+end;
+
+procedure TFrmClientSocket.ClientSocketConnecting(Sender: TObject;
+  Socket: TCustomWinSocket);
+begin
+  FConnecting := true;
 end;
 
 procedure TFrmClientSocket.NotifyMessageChange(msg: String);
@@ -274,6 +292,18 @@ end;
 procedure TFrmClientSocket.SetClientListView(const Value: TListView);
 begin
   FClientListView := Value;
+end;
+
+procedure TFrmClientSocket.SetConnectStatus(msg: String);
+begin
+  if msg ='OK' then
+  begin
+    FAutoRetryCount:=0;
+    FisFirst := false;
+    Timer1.Enabled := false;
+    FLastStatus := 'Connected' ;
+    NotifyStatusChange(FLastStatus);
+  end;
 end;
 
 procedure TFrmClientSocket.SetUsername(userName: String);
@@ -392,7 +422,10 @@ end;
 
 procedure TFrmClientSocket.Timer1Timer(Sender: TObject);
 begin
+  Timer1.Enabled := false;
   Connect;
+
+  //showmessage('Reconnect');
 end;
 
 procedure TFrmClientSocket.AutoConnect;

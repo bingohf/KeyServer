@@ -1,9 +1,9 @@
 object FrmClientSocket: TFrmClientSocket
   Left = 337
   Top = 229
-  Width = 458
-  Height = 274
   Caption = 'Key Management'
+  ClientHeight = 244
+  ClientWidth = 450
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,8 +17,8 @@ object FrmClientSocket: TFrmClientSocket
   object ListView1: TListView
     Left = 0
     Top = 0
-    Width = 442
-    Height = 236
+    Width = 450
+    Height = 244
     Align = alClient
     Columns = <
       item
@@ -51,6 +51,7 @@ object FrmClientSocket: TFrmClientSocket
     Active = False
     ClientType = ctNonBlocking
     Port = 7100
+    OnConnecting = ClientSocketConnecting
     OnConnect = ClientSocketConnect
     OnDisconnect = ClientSocketDisconnect
     OnRead = ClientSocketRead
@@ -67,7 +68,7 @@ object FrmClientSocket: TFrmClientSocket
     end
   end
   object Timer1: TTimer
-    Interval = 60000
+    Interval = 12000
     OnTimer = Timer1Timer
     Left = 216
     Top = 120
