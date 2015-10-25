@@ -54,6 +54,7 @@ type
     FActive:Boolean;
     FConnecting:Boolean;
     FMaxRetry:integer;
+    FFirstAlert:Boolean;
     procedure NotifyStatusChange(msg:String);
     procedure NotifyMessageChange(msg:String);
     procedure NotifyMessageLevelChange(level:String);
@@ -74,6 +75,7 @@ type
     property ServerInfo:String read FServerInfo;
   published
     procedure showMsg(msg:String);
+    procedure showAlertMsg(msg:String);
     procedure GetClientList(jsondata:String);
     procedure Close(msg:String);
     procedure SetMessageLevel(level:String);
@@ -248,7 +250,7 @@ var
   inifile:TIniFile;
   liceseServer:String;
 begin
-
+  FFirstAlert := true;
   FConnecting := false;
   FActive:=false;
   inifile := TIniFile.Create(GetCurrentDir +'\winup.ini');
@@ -491,6 +493,13 @@ end;
 procedure TFrmClientSocket.AutoConnect;
 begin
   Timer1.Enabled := true;
+end;
+
+procedure TFrmClientSocket.showAlertMsg(msg: String);
+begin
+  if FFirstAlert  then
+     ShowMessage(msg);
+   FFirstAlert := false;
 end;
 
 end.

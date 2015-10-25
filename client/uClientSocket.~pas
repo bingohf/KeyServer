@@ -225,6 +225,7 @@ procedure TFrmClientSocket.Connect;
 
   end;
 begin
+  FNeedReconnect := true;
   if not isValidServer then
   begin
     NotifyStatusChange('InvalidServer');
@@ -236,7 +237,7 @@ begin
     begin
       FRefuseMsg := 'Can not connect to Ledway Key Server, please check your network or contact Ledway Key Server Admin.';
       FServerInfo := '';
-      FNeedReconnect := true;
+
       ClientSocket.Active := true;
     end;
   end;

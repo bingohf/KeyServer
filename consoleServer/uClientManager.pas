@@ -202,7 +202,7 @@ begin
     exit;
   end;
   if (now +15 > FExpiryDate) then
-     NotifyAll('[showMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
+     NotifyAll('[showAlertMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
   Socket.SendText(#13'[SetConnectStatus]:OK');
   client := TClient.Create(socket);
   AddClient(client);
