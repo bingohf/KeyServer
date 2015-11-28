@@ -4,15 +4,20 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, SvcMgr, Dialogs,
-  ScktComp, uClientManager, uClient,Forms, ExtCtrls;
+  ScktComp, uClientManager, uClient,Forms, ExtCtrls, IdBaseComponent,
+  IdComponent, IdTCPServer, IdCustomHTTPServer, IdHTTPServer;
 
 type
   TscMain = class(TService,INotifyChange)
     clientSocket: TServerSocket;
     adminSocket: TServerSocket;
     Timer1: TTimer;
+    IdHTTPServer1: TIdHTTPServer;
     procedure ServiceStart(Sender: TService; var Started: Boolean);
     procedure Timer1Timer(Sender: TObject);
+    procedure IdHTTPServer1CommandGet(AThread: TIdPeerThread;
+      ARequestInfo: TIdHTTPRequestInfo;
+      AResponseInfo: TIdHTTPResponseInfo);
   private
     { Private declarations }
         procedure clientAdd(client:TClient; clientList:TStringList);
@@ -28,6 +33,8 @@ var
   scMain: TscMain;
 
 implementation
+
+uses ElAES;
 
 {$R *.DFM}
 
@@ -63,13 +70,19 @@ end;
 
 procedure TscMain.ServiceStart(Sender: TService; var Started: Boolean);
 begin
-  TClientManager.Create(scMain.clientSocket,scMain.adminSocket,scMain);
+  TClientManager.Create(scMain.clientSocket,scMain.adminSocket,IdHTTPServer1, scMain);
 end;
 
 procedure TscMain.Timer1Timer(Sender: TObject);
 begin
 //  if now > ClientManager.ExpiryDate then
     ClientManager.DisconnectAll;
+end;
+
+procedure TscMain.IdHTTPServer1CommandGet(AThread: TIdPeerThread;
+  ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+begin
+  //
 end;
 
 end.

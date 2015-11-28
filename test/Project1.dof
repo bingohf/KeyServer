@@ -94,8 +94,8 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;F:\socket\JCL-24~1.457\lib\d7\debug;F:\socket\TPerlRegEx2011
-Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;JclDeveloperTools;Jcl;JclVcl;JclContainers
+SearchPath=
+Packages=
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
@@ -134,11 +134,3 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=3
-Item0=$(DELPHI)\Lib\Debug;F:\socket\JCL-24~1.457\lib\d7\debug;F:\socket\TPerlRegEx2011
-Item1=F:\socket\TPerlRegEx2011
-Item2=..\TPerlRegEx2011

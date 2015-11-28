@@ -4,7 +4,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ScktComp, ComCtrls,uClient,JclSysInfo,iniFiles,ElAES,
-  encddecd, ulkJson,PerlRegEx;
+  encddecd, ulkJson,PerlRegEx,IdBaseComponent,  IdComponent, IdTCPServer, IdCustomHTTPServer, IdHTTPServer;
 
 type
   TMsgProcedure = procedure(msg:String) of object;
@@ -49,10 +49,10 @@ type
     function DecryptLedwayString(source:String):String;
     procedure NotifyAll(msg:String);
     function GetAllclientJson:String;
-
+    procedure HttpServerCommandGet(AThread: TIdPeerThread; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
   public
     procedure NotifyClientList;
-    constructor Create(clientServer,adminServer:TServerSocket; callBack:INotifyChange);
+    constructor Create(clientServer,adminServer:TServerSocket;httpServer:TIdHTTPServer; callBack:INotifyChange);
     procedure Disconnect(Client:TClient);
     procedure DisconnectAll();
     function GetClient(id:integer):TClient;
@@ -72,6 +72,27 @@ var
 implementation
 
 { TClientManager }
+
+function EncryptStr(str:String):String;
+var
+  sDest:TmemoryStream;
+  sBase64,sStream :TStringStream;
+  key:TAESKey256;
+  keyString:String;
+
+begin
+  keyString :=  'qwer0987_';
+  sStream := TStringStream.Create(str);
+  sDest  := TMemoryStream.Create;
+  sBase64 := TStringStream.Create('');
+  FillChar(key, sizeOf(key), 0);
+  Move(PChar(keyString)^, key, length(keyString));
+  sStream.Position := 0;
+  EncryptAESStreamECB(sStream, sStream.Size, key, sDest);
+  sDest.Position := 0;
+  EncodeStream(sDest, sBase64);
+  result := sBase64.DataString;
+end;
 
 
 procedure TClientManager.AddClient(Client: TClient);
@@ -110,7 +131,7 @@ begin
   end;
 end;
 
-constructor TClientManager.Create(clientServer,adminServer: TServerSocket; callBack:INotifyChange);
+constructor TClientManager.Create(clientServer,adminServer: TServerSocket;httpServer:TIdHTTPServer; callBack:INotifyChange);
 begin
   Fcallback := callback;
   ClientManager := self;
@@ -136,7 +157,7 @@ begin
   FAdminSocket.OnClientDisconnect := AdminSocketClientDisconnect;
   FAdminSocket.OnClientError := AdminSocketClientError;
   FAdminSocket.Open;
-
+  httpServer.OnCommandGet :=   HttpServerCommandGet
 
 
 end;
@@ -181,33 +202,36 @@ procedure TClientManager.ServerSocketClientConnect(Sender: TObject;
 var
   client:TClient;
 begin
+  try
+    Socket.SendText(#13'[SetServerInfo]:' + 'DeviceID=' +GetVolumeSerialNumber('C') +';LicenseCount=' +  inttostr(FLicenseCount) +';ExpiredDate=' + DateTimeToStr(FExpiryDate));
+    if FLicenseError <> '' then
+    begin
+       Socket.SendText(#13'[SetRefuseMsg]:' + FLicenseError);
+       Socket.Disconnect(Socket.SocketHandle);
+       exit;
+    end;
+    if (Now > FExpiryDate)  then
+    begin
+       Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license is expired(' + DateToStr(FExpiryDate) +')');
+       Socket.Disconnect(Socket.SocketHandle);
+      exit;
+    end;
+    if FLicenseCount <= FClientList.Count then
+    begin
+       Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license count is not enough (' + inttostr(FLicenseCount) +')');
+       Socket.Disconnect(Socket.SocketHandle);
+      exit;
+    end;
 
-  Socket.SendText(#13'[SetServerInfo]:' + 'DeviceID=' +GetVolumeSerialNumber('C') +';LicenseCount=' +  inttostr(FLicenseCount) +';ExpiredDate=' + DateTimeToStr(FExpiryDate));
-  if FLicenseError <> '' then
-  begin
-     Socket.SendText(#13'[SetRefuseMsg]:' + FLicenseError);
-     Socket.Disconnect(Socket.SocketHandle);
-     exit;
-  end;
-  if (Now > FExpiryDate)  then
-  begin
-     Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license is expired(' + DateToStr(FExpiryDate) +')');
-     Socket.Disconnect(Socket.SocketHandle);
-    exit;
-  end;
-  if FLicenseCount <= FClientList.Count then
-  begin
-     Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license count is not enough (' + inttostr(FLicenseCount) +')');
-     Socket.Disconnect(Socket.SocketHandle);
-    exit;
-  end;
-  if (now +15 > FExpiryDate) then
-     NotifyAll('[showAlertMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
-  Socket.SendText(#13'[SetConnectStatus]:OK');
-  client := TClient.Create(socket);
-  AddClient(client);
-  Fcallback.clientAdd(client, FClientList);
+    client := TClient.Create(socket);
+      AddClient(client);
+    if (now +15 > FExpiryDate) then
+       NotifyAll('[showAlertMsg]:Ledway Key Server is about to expire (' + DateToStr(FExpiryDate) +')');
+    Socket.SendText(#13'[SetConnectStatus]:OK');
 
+    Fcallback.clientAdd(client, FClientList);
+  except
+  end;
 
 end;
 
@@ -216,9 +240,12 @@ procedure TClientManager.ServerSocketClientDisconnect(Sender: TObject;
 var
   client:TClient;
 begin
-  client := GetClient(socket.SocketHandle);
-  if (client <> nil) then
-    RemoveClient(client);
+  try
+    client := GetClient(socket.SocketHandle);
+    if (client <> nil) then
+      RemoveClient(client);
+  except
+  end;
 
 
 end;
@@ -359,9 +386,18 @@ var
   sid:String;
   i:integer;
 begin
-  for i :=0 to FServerSocket.Socket.ActiveConnections -1 do
-  begin
-    FServerSocket.Socket.Connections[i].SendText(#13 + msg);
+  try
+
+    for i :=0 to FClientList.Count -1 do
+    begin
+      try
+        (FClientList.Objects[i] as TClient).Socket.SendText(#13 + msg);
+      except
+      end;
+      //FServerSocket.Socket.Connections[i].SendText(#13 + '[GetClientList]:' +json);
+    end;
+  except
+
   end;
 end;
 
@@ -409,7 +445,10 @@ begin
   json := GetAllclientJson;
   for i :=0 to FClientList.Count -1 do
   begin
-    (FClientList.Objects[i] as TClient).Socket.SendText(#13 + '[GetClientList]:' +json);
+    try
+      (FClientList.Objects[i] as TClient).Socket.SendText(#13 + '[GetClientList]:' +json);
+    except
+    end;
     //FServerSocket.Socket.Connections[i].SendText(#13 + '[GetClientList]:' +json);
   end;
 end;
@@ -421,15 +460,21 @@ begin
   i := FClientList.IndexOf(id);
   if i >=0 then
   begin
-    (FClientList.Objects[i] as TClient).Socket.SendText('[Close]:Winup is closed by admin');
-    (FClientList.Objects[i] as TClient).Socket.Close;
+    try
+      (FClientList.Objects[i] as TClient).Socket.SendText('[Close]:Winup is closed by admin');
+      (FClientList.Objects[i] as TClient).Socket.Close;
+    except
+    end;
   end;
 end;
 
 procedure TClientManager.AdminSocketClientConnect(Sender: TObject;
   Socket: TCustomWinSocket);
 begin
+  try
      Socket.SendText('DeviceID=' +GetVolumeSerialNumber('C') +';LicenseCount=' +  inttostr(FLicenseCount) +';ExpiredDate=' + DateTimeToStr(FExpiryDate));
+  except
+  end;
 end;
 
 procedure TClientManager.AdminSocketClientDisconnect(Sender: TObject;
@@ -476,7 +521,10 @@ begin
         continue;
       m.Data := pointer(self);
       r:= TMsgFunction(m)(param);
-      Socket.SendText(r);
+      try
+        Socket.SendText(r);
+      except
+      end;
     end;
   end;
 end;
@@ -523,6 +571,16 @@ begin
    finally
      iniFile.Free;
    end;
+end;
+
+procedure TClientManager.HttpServerCommandGet(AThread: TIdPeerThread;
+  ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  key:String;
+begin
+  key := ARequestInfo.Params.Values['Key'];
+  AResponseInfo.ContentText := EncryptStr(key);
+
 end;
 
 end.

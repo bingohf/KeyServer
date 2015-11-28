@@ -27,4 +27,19 @@ object scMain: TscMain
     Left = 160
     Top = 80
   end
+  object IdHTTPServer1: TIdHTTPServer
+    Active = True
+    Bindings = <>
+    CommandHandlers = <>
+    DefaultPort = 7300
+    Greeting.NumericCode = 0
+    ListenQueue = 2
+    MaxConnectionReply.NumericCode = 0
+    ReplyExceptionCode = 0
+    ReplyTexts = <>
+    ReplyUnknownCommand.NumericCode = 0
+    OnCommandGet = IdHTTPServer1CommandGet
+    Left = 240
+    Top = 104
+  end
 end

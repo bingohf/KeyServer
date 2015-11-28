@@ -12,6 +12,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
-  TClientManager.Create(MainForm.clientSocket,MainForm.adminSocket, MainForm);
+  TClientManager.Create(MainForm.clientSocket,MainForm.adminSocket,MainForm.IdHTTPServer1, MainForm);
   Application.Run;
 end.
