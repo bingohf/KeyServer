@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, SvcMgr, Dialogs,
   ScktComp, uClientManager, uClient,Forms, ExtCtrls, IdBaseComponent,
-  IdComponent, IdTCPServer, IdCustomHTTPServer, IdHTTPServer;
+  IdComponent, IdTCPServer, IdCustomHTTPServer, IdHTTPServer,TConfiguratorUnit;
 
 type
   TscMain = class(TService,INotifyChange)
@@ -70,12 +70,13 @@ end;
 
 procedure TscMain.ServiceStart(Sender: TService; var Started: Boolean);
 begin
+  TConfiguratorUnit.doBasicConfiguration;
   TClientManager.Create(scMain.clientSocket,scMain.adminSocket,IdHTTPServer1, scMain);
 end;
 
 procedure TscMain.Timer1Timer(Sender: TObject);
 begin
-//  if now > ClientManager.ExpiryDate then
+  if now > ClientManager.ExpiryDate then
     ClientManager.DisconnectAll;
 end;
 

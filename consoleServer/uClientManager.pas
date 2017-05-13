@@ -4,7 +4,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ScktComp, ComCtrls,uClient,JclSysInfo,iniFiles,ElAES,
-  encddecd, ulkJson,PerlRegEx,IdBaseComponent,  IdComponent, IdTCPServer, IdCustomHTTPServer, IdHTTPServer;
+  encddecd, ulkJson,PerlRegEx,IdBaseComponent,  IdComponent, IdTCPServer,
+  IdCustomHTTPServer, IdHTTPServer,TLoggerUnit,TLevelUnit,TFileAppenderUnit,
+  ExtCtrls,JclHookExcept,JclDebug,TypInfo,db,adodb,dateUtils;
 
 type
   TMsgProcedure = procedure(msg:String) of object;
@@ -25,6 +27,13 @@ type
     FExpiryDate: TdateTime;
     FRegEx :TPerlRegEx;
     FLicenseError:String;
+    FTimer:TTimer;
+    FtimerMsg:String;
+    FLock:Boolean;
+    FAdoDataSet: TADODataSet;
+    FWListCount :integer;
+    FWebOpList:TStringList;
+    FWebOpTime:TTimer;
     function GetCurrentClient:TClient;
     procedure AddClient(Client :TClient);
     procedure RemoveClient(client:TClient);
@@ -45,11 +54,20 @@ type
     procedure AdminSocketClientError(Sender: TObject;  Socket: TCustomWinSocket; ErrorEvent: TErrorEvent;  var ErrorCode: Integer);
     procedure LoadLicense;
 
-
+    procedure Lock;
+    procedure RelaseLock;
     function DecryptLedwayString(source:String):String;
     procedure NotifyAll(msg:String);
     function GetAllclientJson:String;
     procedure HttpServerCommandGet(AThread: TIdPeerThread; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure HttpServerCommandOther(Thread: TIdPeerThread;  const asCommand, asData, asVersion: String);
+    procedure OnQueueMessage(Sender:TObject);
+     procedure GlobalExcept(Sender: TObject; E: Exception);
+     procedure LogException(ExceptObj: TObject; ExceptAddr: Pointer; IsOS: Boolean);
+    procedure loadDBWList;
+    procedure refreshWList(Sender:TObject);
+    function AvaliableLicenseCount :Integer;
+    procedure WebOptimerTimer(Sender:TObject);
   public
     procedure NotifyClientList;
     constructor Create(clientServer,adminServer:TServerSocket;httpServer:TIdHTTPServer; callBack:INotifyChange);
@@ -69,6 +87,8 @@ type
 
 var
   ClientManager:TClientManager;
+  logger : TLogger;
+  hMutex:HWnd;
 implementation
 
 { TClientManager }
@@ -106,7 +126,7 @@ begin
     FClientList.Delete(index);
   end;
   FClientList.AddObject(client.HandleID, client);
-  NotifyAll('License:' + inttostr(FClientList.count) + '/' +inttostr(FLicenseCount));
+  NotifyAll('License:' + inttostr(FClientList.count + FWListCount + FWebOpList.Count) + '/' +inttostr(FLicenseCount));
   if (now +15 > FExpiryDate) then
      NotifyAll('[SetMessageLevel]:W');
 
@@ -133,6 +153,26 @@ end;
 
 constructor TClientManager.Create(clientServer,adminServer: TServerSocket;httpServer:TIdHTTPServer; callBack:INotifyChange);
 begin
+  FWebOpList := TStringList.Create;
+//  Application.OnException := GlobalExcept;
+  JclAddExceptNotifier(LogException);
+ // exit;
+ // hMutex :=  CreateMutex(nil,false,nil);
+  FLock := false;
+  FTimer := TTimer.Create(clientServer.Owner);
+  FTimer.Interval := 200;
+  FtimerMsg := '';
+  FTimer.OnTimer := OnQueueMessage;
+  FTimer.Enabled := false;
+  FWebOpTime := TTimer.Create(Application);
+  FWebOpTime.OnTimer := WebOptimerTimer;
+  FWebOpTime.Enabled := true;
+  FWebOpTime.Interval := 60000;
+
+
+  logger := TLogger.getInstance;
+  logger.setLevel(TLevelUnit.INFO);
+  logger.addAppender(TFileAppender.Create(ExtractFilePath( Application.ExeName) + '\ledwayKeyService.log'));
   Fcallback := callback;
   ClientManager := self;
   FLicenseCount := 0;
@@ -157,8 +197,9 @@ begin
   FAdminSocket.OnClientDisconnect := AdminSocketClientDisconnect;
   FAdminSocket.OnClientError := AdminSocketClientError;
   FAdminSocket.Open;
-  httpServer.OnCommandGet :=   HttpServerCommandGet
+  httpServer.OnCommandGet :=   HttpServerCommandGet;
 
+  loadDBWList();
 
 end;
 
@@ -188,20 +229,28 @@ end;
 procedure TClientManager.RemoveClient(client: TClient);
 var
   i:integer;
+  s:string;
 begin
+ 
+  s :=       'remove :' + client.HandleID + ' ' + inttostr(GetCurrentThread);
+    logger.Info(s);
    Fcallback.removeClient(client);
   i := FClientList.IndexOf(client.HandleID);
   FClientList.Objects[i].Free;
   FClientList.Delete(i);
-  NotifyAll('License:' + inttostr(FClientList.count) + '/' +inttostr(FLicenseCount));
+  NotifyAll('License:' + inttostr(FClientList.count + FWListCount + FWebOpList.Count) + '/' +inttostr(FLicenseCount));
   NotifyClientList;
+    logger.Info(s +  ' done');
 end;
 
 procedure TClientManager.ServerSocketClientConnect(Sender: TObject;
   Socket: TCustomWinSocket);
 var
   client:TClient;
+  s:String;
 begin
+  s := 'connect:' + inttostr(Socket.Handle);
+  logger.Info(s);
   try
     Socket.SendText(#13'[SetServerInfo]:' + 'DeviceID=' +GetVolumeSerialNumber('C') +';LicenseCount=' +  inttostr(FLicenseCount) +';ExpiredDate=' + DateTimeToStr(FExpiryDate));
     if FLicenseError <> '' then
@@ -216,7 +265,7 @@ begin
        Socket.Disconnect(Socket.SocketHandle);
       exit;
     end;
-    if FLicenseCount <= FClientList.Count then
+    if FLicenseCount <= (FClientList.Count + FWListCount + FWebOpList.Count) then
     begin
        Socket.SendText(#13'[SetRefuseMsg]:' + 'Your license count is not enough (' + inttostr(FLicenseCount) +')');
        Socket.Disconnect(Socket.SocketHandle);
@@ -231,23 +280,32 @@ begin
 
     Fcallback.clientAdd(client, FClientList);
   except
+       Logger.Error('connect');
   end;
-
+  logger.Info(s + ' done');
 end;
 
 procedure TClientManager.ServerSocketClientDisconnect(Sender: TObject;
   Socket: TCustomWinSocket);
 var
   client:TClient;
+  s:String;
+  i:integer;
+  j:real;
 begin
+   s :=      'disconnect :' + inttostr( Socket.SocketHandle);
+    logger.Info(s);
   try
     client := GetClient(socket.SocketHandle);
     if (client <> nil) then
       RemoveClient(client);
+
   except
+       Logger.Error('disconnect');
   end;
 
-
+      logger.Info(s  + ' done');
+ //ReleaseMutex(hMutex)
 end;
 
 procedure TClientManager.ServerSocketClientRead(Sender: TObject;
@@ -263,6 +321,7 @@ var i:integer;
   param:String;
   m:Tmethod;
 begin
+  try
   client := GetClient(socket.SocketHandle);
   stringList := TStringList.create;
   stringList.Text := Socket.ReceiveText;
@@ -289,7 +348,9 @@ begin
       end;
     end;
   end;
-
+  Except
+    logger.Error('read');
+  end;
 
 end;
 
@@ -385,18 +446,14 @@ procedure TClientManager.NotifyAll(msg: String);
 var
   sid:String;
   i:integer;
+  c:TClient;
 begin
   try
 
-    for i :=0 to FClientList.Count -1 do
-    begin
-      try
-        (FClientList.Objects[i] as TClient).Socket.SendText(#13 + msg);
-      except
-      end;
-      //FServerSocket.Socket.Connections[i].SendText(#13 + '[GetClientList]:' +json);
-    end;
+   FtimerMsg := FtimerMsg +#13  + msg;
+   FTimer.Enabled := true;
   except
+       Logger.Error('Notifyall');
 
   end;
 end;
@@ -406,11 +463,63 @@ procedure TClientManager.ServerSocketClientError(Sender: TObject;
   var ErrorCode: Integer);
 var
   client:TClient;
+  s:String;
+  i:integer;
+  j :real;
 begin
-  client := GetClient(socket.SocketHandle);
-  if (client <> nil) then
-    RemoveClient(client);
-  ErrorCode := 0;
+  try
+    try
+    Socket.Lock;
+    s :=   'clienterror :' +     inttostr( Socket.SocketHandle);
+    logger.Info( s);
+    client := GetClient(socket.SocketHandle);
+    if (client <> nil) then
+      RemoveClient(client);
+    ErrorCode := 0;
+    logger.Info( s + ' done') ;
+    except
+      logger.Error('clienterror');
+    end;
+  finally
+    Socket.Unlock;
+  end;
+
+end;
+
+procedure TClientManager.OnQueueMessage(Sender:TObject);
+var
+i:integer;
+c:TClient;
+lid:String;
+list:TList;
+begin
+  try
+    try
+      if FTimerMsg <> '' then
+      begin
+        list := TList.Create;
+        for i := 0 to FclientList.Count -1 do
+        begin
+          list.Add((FClientList.Objects[i] as TClient).Socket);
+        end;
+        while list.Count >0 do
+        begin
+          TCustomWinSocket(list.Items[0]).SendText(FtimerMsg);
+          list.Delete(0);
+        end;
+        list.Free;
+      end;
+   except
+     Logger.Error('OnQueueMessage');
+
+   end;
+ finally
+
+   FtimerMsg := '';
+   FTimer.Enabled := false;
+ end;
+
+
 end;
 
 function TClientManager.GetAllclientJson: String;
@@ -443,7 +552,8 @@ var
   i:integer;
 begin
   json := GetAllclientJson;
-  for i :=0 to FClientList.Count -1 do
+  NotifyAll('[GetClientList]:' +json);
+{  for i :=0 to FClientList.Count -1 do
   begin
     try
       (FClientList.Objects[i] as TClient).Socket.SendText(#13 + '[GetClientList]:' +json);
@@ -451,6 +561,7 @@ begin
     end;
     //FServerSocket.Socket.Connections[i].SendText(#13 + '[GetClientList]:' +json);
   end;
+  }
 end;
 
 procedure TClientManager.CloseClient(id: string);
@@ -464,6 +575,7 @@ begin
       (FClientList.Objects[i] as TClient).Socket.SendText('[Close]:Winup is closed by admin');
       (FClientList.Objects[i] as TClient).Socket.Close;
     except
+         Logger.Error('closeclient');
     end;
   end;
 end;
@@ -474,6 +586,7 @@ begin
   try
      Socket.SendText('DeviceID=' +GetVolumeSerialNumber('C') +';LicenseCount=' +  inttostr(FLicenseCount) +';ExpiredDate=' + DateTimeToStr(FExpiryDate));
   except
+       Logger.Error('admin clientconeect');
   end;
 end;
 
@@ -524,6 +637,7 @@ begin
       try
         Socket.SendText(r);
       except
+           Logger.Error('admin socket');
       end;
     end;
   end;
@@ -549,9 +663,9 @@ procedure TClientManager.DisconnectAll;
 var
   i:integer;
 begin
-  for i := 0 to FClientList.Count -1 do
+  while FClientList.Count >0 do
   begin
-    TClient(FClientList.Objects[i]).Socket.Close;
+    TClient(FClientList.Objects[0]).Socket.Close;
   end;
 
 end;
@@ -577,10 +691,185 @@ procedure TClientManager.HttpServerCommandGet(AThread: TIdPeerThread;
   ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   key:String;
+  expiredDate:TDateTime;
 begin
-  key := ARequestInfo.Params.Values['Key'];
-  AResponseInfo.ContentText := EncryptStr(key);
+  if ARequestInfo.Document ='/' then
+  begin
+    key := ARequestInfo.Params.Values['Key'];
+    AResponseInfo.ContentText := EncryptStr(key);
+  end else if (ARequestInfo.Document = '/license') and (ARequestInfo.Command ='POST') then
+  begin
+     if AvaliableLicenseCount <= 0 then
+     begin
+       AResponseInfo.ContentText := 'License overflow';
+       AResponseInfo.ResponseNo := 401;
+     end else
+     begin
+       expiredDate := incMinute(now, 1);
+       FWebOpList.Values[ARequestInfo.FormParams] := FloatToStr(expiredDate);
+       AResponseInfo.ContentText := DateTimeToStr(expiredDate);
+     end;
+
+  end;
+
+end;
+procedure TClientManager.HttpServerCommandOther(Thread: TIdPeerThread;  const asCommand, asData, asVersion: String);
+begin
+  ShowMessage(asCommand);
+end;
+procedure TClientManager.Lock;
+begin
+  while Flock do
+  begin
+    Application.ProcessMessages;
+  end;
+  FLock := true;
+end;
+
+procedure TClientManager.RelaseLock;
+begin
+  FLock := false;
 
 end;
 
+procedure TClientManager.GlobalExcept(Sender: TObject; E: Exception);
+begin
+  logger.Error(e.Message);
+end;
+
+procedure TClientManager.LogException(ExceptObj: TObject;
+  ExceptAddr: Pointer; IsOS: Boolean);
+var
+  TmpS: string;
+  ModInfo: TJclLocationInfo;
+  I: Integer;
+  ExceptionHandled: Boolean;
+  HandlerLocation: Pointer;
+  ExceptFrame: TJclExceptFrame;
+  ss:TStringList;
+begin
+  ss:= TStringList.Create;
+  TmpS := 'Exception ' + ExceptObj.ClassName;
+  if ExceptObj is Exception then
+    TmpS := TmpS + ': ' + Exception(ExceptObj).Message;
+  if IsOS then
+    TmpS := TmpS + ' (OS Exception)';
+  ss.Add(TmpS);
+  ModInfo := GetLocationInfo(ExceptAddr);
+  ss.Add(Format(
+    '  Exception occured at $%p (Module "%s", Procedure "%s", Unit "%s", Line %d)',
+    [ModInfo.Address,
+     ModInfo.UnitName,
+     ModInfo.ProcedureName,
+     ModInfo.SourceName,
+     ModInfo.LineNumber]));
+  if stExceptFrame in JclStackTrackingOptions then
+  begin
+    ss.Add('  Except frame-dump:');
+    I := 0;
+    ExceptionHandled := False;
+    while (true or not ExceptionHandled) and
+      (I < JclLastExceptFrameList.Count) do
+    begin
+      ExceptFrame := JclLastExceptFrameList.Items[I];
+      ExceptionHandled := ExceptFrame.HandlerInfo(ExceptObj, HandlerLocation);
+      if (ExceptFrame.FrameKind = efkFinally) or
+          (ExceptFrame.FrameKind = efkUnknown) or
+          not ExceptionHandled then
+        HandlerLocation := ExceptFrame.CodeLocation;
+      ModInfo := GetLocationInfo(HandlerLocation);
+      TmpS := Format(
+        '    Frame at $%p (type: %s',
+        [ExceptFrame.FrameLocation,
+         GetEnumName(TypeInfo(TExceptFrameKind), Ord(ExceptFrame.FrameKind))]);
+      if ExceptionHandled then
+        TmpS := TmpS + ', handles exception)'
+      else
+        TmpS := TmpS + ')';
+      ss.Add(TmpS);
+      if ExceptionHandled then
+        ss.Add(Format(
+          '      Handler at $%p',
+          [HandlerLocation]))
+      else
+        ss.Add(Format(
+          '      Code at $%p',
+          [HandlerLocation]));
+      ss.Add(Format(
+        '      Module "%s", Procedure "%s", Unit "%s", Line %d',
+        [ModInfo.UnitName,
+         ModInfo.ProcedureName,
+         ModInfo.SourceName,
+         ModInfo.LineNumber]));
+      Inc(I);
+    end;
+  end;
+  Logger.Error(ss.Text);
+  ss.free;
+end;
+procedure TClientManager.loadDBWList;
+var
+  iniFile:TIniFile;
+  fileName:String;
+  connectStr:String;
+begin
+  fileName := ExtractFilePath( Application.ExeName) +'\wlist.ini';
+  if not FileExists(fileName) then
+  begin
+    exit;
+  end;
+  iniFile := TIniFile.Create(fileName);
+  connectStr := iniFile.ReadString('DB','ConnectString','');
+  if connectStr <>'' then
+  begin
+    FAdoDataSet := TADODataSet.Create(Application);
+    FAdoDataSet.ConnectionString := connectStr;
+    FAdoDataSet.CommandText := 'select * from ledwaybasic.vw_wlist where active =''Y''';
+
+    with TTimer.Create(Application) do
+    begin
+      Interval := 60000;
+      OnTimer := refreshWList;
+      Enabled := true;
+    end;
+  end;
+
+end;
+procedure TClientManager.refreshWList(Sender:TObject);
+begin
+  FAdoDataSet.Close;
+  FAdoDataSet.Open;
+  FWListCount := FAdoDataSet.RecordCount;
+  FAdoDataSet.Close;
+end;
+
+
+function TClientManager.AvaliableLicenseCount: integer;
+begin
+  result := LicenseCount -  (FClientList.Count + FWListCount + FWebOpList.Count)  ;
+end;
+
+procedure TClientManager.WebOptimerTimer(Sender: TObject);
+var
+  i:integer;
+  d:TDateTime;
+begin
+  i := 0;
+  while i < FWebOpList.Count do
+  begin
+    d := StrToFloat( FWebOpList.ValueFromIndex[i]);
+    if d < Now then
+    begin
+      FWebOpList.Delete(i);
+    end else
+      i := i + 1;
+
+  end;
+
+end;
+
+initialization
+
+  JclStackTrackingOptions := JclStackTrackingOptions + [stExceptFrame];
+  JclStartExceptionTracking;
 end.

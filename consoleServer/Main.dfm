@@ -1,8 +1,8 @@
 object MainForm: TMainForm
-  Left = 256
-  Top = 140
-  Width = 870
-  Height = 500
+  Left = 250
+  Top = 123
+  Width = 901
+  Height = 534
   Caption = 'LedwayKeyServer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,13 +17,13 @@ object MainForm: TMainForm
   object Splitter1: TSplitter
     Left = 457
     Top = 0
-    Height = 423
+    Height = 457
   end
   object ListView: TListView
     Left = 0
     Top = 0
     Width = 457
-    Height = 423
+    Height = 457
     Align = alLeft
     Columns = <
       item
@@ -47,16 +47,16 @@ object MainForm: TMainForm
   object Panel1: TPanel
     Left = 460
     Top = 0
-    Width = 394
-    Height = 423
+    Width = 425
+    Height = 457
     Align = alClient
     Caption = 'Panel1'
     TabOrder = 1
     object memoMsg: TMemo
       Left = 1
       Top = 1
-      Width = 392
-      Height = 388
+      Width = 423
+      Height = 422
       Align = alClient
       Lines.Strings = (
         '')
@@ -65,19 +65,19 @@ object MainForm: TMainForm
     end
     object Panel2: TPanel
       Left = 1
-      Top = 389
-      Width = 392
+      Top = 423
+      Width = 423
       Height = 33
       Align = alBottom
       Caption = 'Panel2'
       TabOrder = 1
       DesignSize = (
-        392
+        423
         33)
       object edtSend: TEdit
         Left = 1
         Top = 1
-        Width = 384
+        Width = 415
         Height = 21
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
@@ -86,8 +86,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 423
-    Width = 854
+    Top = 457
+    Width = 885
     Height = 19
     Panels = <
       item
@@ -122,6 +122,7 @@ object MainForm: TMainForm
     Active = False
     Port = 7100
     ServerType = stNonBlocking
+    ThreadCacheSize = 2
     OnListen = clientSocketListen
     Left = 24
     Top = 32

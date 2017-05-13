@@ -1,0 +1,6 @@
+DEBUG: Logger created - name=ROOT, level=ALL
+DEBUG: TLogger.SetLevel: INFO
+DEBUG: TAppender#Create
+DEBUG: TFileAppender#SetFile: F:\workdir\consoleServer\\ledwayKeyService.log
+DEBUG: TAppender#Create
+DEBUG: Appender added to ROOT, named TFileAppender
